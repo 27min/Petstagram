@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.ain.mapper.NotificationMapper">
+
+    <insert id="createNotification" parameterType="com.team.ain.dto.notice.NotificationDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notifications (
+            recipient_id,
+            sender_id,
+            notification_type,
+            content,
+            related_id
+        ) VALUES (
+            #{recipientId},
+            #{senderId},
+            #{notificationType, typeHandler=com.team.ain.config.NotificationTypeHandler},
+            #{content},
+            #{relatedId}
+        )
+    </insert>
+
+    <select id="getUnreadNotifications" resultType="com.team.ain.dto.notice.NotificationDTO">
+        SELECT 
+            n.id,
+            n.recipient_id as recipientId,
+            n.sender_id as senderId,
+            m.name as senderName,
+            n.notification_type as "notificationType,typeHandler=com.team.ain.config.NotificationTypeHandler",
+            n.content,
+            n.related_id as relatedId,
+            n.is_read as isRead,
+            n.created_at as createdAt
+        FROM notifications n
+        LEFT JOIN member m ON n.sender_id = m.id
+        WHERE n.recipient_id = #{userId}
+        AND n.is_read = false
+        ORDER BY n.created_at DESC
+    </select>
+
+    <update id="markNotificationsAsRead">
+        UPDATE notifications
+        SET is_read = true
+        WHERE recipient_id = #{userId}
+        AND id IN
+        <foreach item="notificationId" collection="notificationIds" open="(" separator="," close=")">
+            #{notificationId}
+        </foreach>
+    </update>
+
+    <select id="getUnreadCount" resultType="int">
+        SELECT COUNT(*)
+        FROM notifications
+        WHERE recipient_id = #{userId}
+        AND is_read = false
+    </select>
+
+    <!-- 메시지 읽음 처리 -->
+    <update id="markChatNotificationsAsRead">
+        UPDATE notifications 
+        SET is_read = true 
+        WHERE notification_type = 'NEW_MESSAGE'::notification_type  
+        AND recipient_id = #{userId} 
+        AND related_id = #{roomId}
+        AND is_read = false
+    </update>
+
+    <!-- 새로운 메시지 알림을 위한 동적 쿼리 추가 -->
+    <!-- <insert id="createMessageNotifications">
+        INSERT INTO notifications (
+            recipient_id,
+            sender_id,
+            notification_type,
+            content,
+            related_id
+        )
+        SELECT 
+            crm.member_id,
+            #{senderId},
+            'NEW_MESSAGE',
+            #{content},
+            #{messageId}
+        FROM chat_room_member crm
+        WHERE crm.room_id = #{roomId}
+        AND crm.member_id != #{senderId}
+    </insert> -->
+
+    <!-- 특정 기간이 지난 알림 삭제를 위한 쿼리 -->
+    <!-- <delete id="deleteOldNotifications">
+        DELETE FROM notifications
+        WHERE created_at < #{cutoffDate}
+        AND is_read = true
+    </delete> -->
+
+    <!-- 특정 사용자의 모든 알림 조회 (페이징 처리) -->
+    <!-- <select id="getNotificationsWithPaging" resultMap="NotificationResultMap">
+        SELECT 
+            n.*,
+            m.name as sender_name
+        FROM notifications n
+        LEFT JOIN member m ON n.sender_id = m.id
+        WHERE n.recipient_id = #{userId}
+        <if test="onlyUnread">
+            AND n.is_read = false
+        </if>
+        ORDER BY n.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select> -->
+</mapper>

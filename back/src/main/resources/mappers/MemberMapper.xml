@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.team.ain.mapper.MemberMapper">
+    <insert id="insertMember" parameterType="com.team.ain.dto.auth.MemberJoin">
+        INSERT INTO member (
+            email,
+            password,
+            name,
+            phone_number,
+            created_at
+        ) VALUES (
+            #{email},
+            #{password},
+            #{name},
+            #{phoneNumber},
+            now()
+        )
+    </insert>
+
+    <update id="updateProfile" parameterType="com.team.ain.dto.auth.MemberProfile">
+        UPDATE member 
+        SET profile_picture_url = #{profile_picture_url} 
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByEmail" parameterType="String" resultType="com.team.ain.dto.auth.Member">
+        SELECT * FROM member WHERE email = #{email} LIMIT 1
+    </select>
+    <select id="findByPhoneNumber" parameterType="String" resultType="com.team.ain.dto.auth.Member">
+        SELECT * FROM member WHERE phone_number = #{phoneNumber}
+    </select>
+    <select id="findNameAndProfileUrlById" parameterType="long" resultType="com.team.ain.dto.auth.MemberProfile">
+        SELECT id, name, profile_picture_url FROM member WHERE id = #{id}
+    </select>
+    <select id="findById" parameterType="long" resultType="com.team.ain.dto.auth.Member">
+        SELECT id, name FROM member WHERE id = #{memberId}
+    </select>
+
+    <update id="updateMemberProfile" parameterType="com.team.ain.dto.auth.Member">
+    UPDATE member
+    SET 
+        name = #{name},
+        phone_number = #{phoneNumber},
+        profile_picture_url = #{profilePictureUrl}
+        <if test="password != null">
+        , password = #{password}
+        </if>
+    WHERE email = #{email}
+    </update>
+</mapper>

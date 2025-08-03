@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.ain.mapper.ChatRoomMapper">
+    
+    <!-- 채팅방 생성 -->
+    <insert id="insertRoom" parameterType="com.team.ain.dto.chat.ChatRoomDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chat_room (
+            room_name,
+            room_type,
+            host_id,
+            is_active
+        ) VALUES (
+            #{roomName},
+            #{roomType},
+            #{hostId},
+            true
+        )
+    </insert>
+    
+    <!-- 채팅방 멤버 추가 -->
+    <insert id="addRoomMember">
+        INSERT INTO chat_room_member (
+            room_id,
+            member_id,
+            joined_at,
+            last_read_at
+        ) VALUES (
+            #{roomId},
+            #{userId},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 채팅방 목록 가져오기 + 읽지 않은 알림 수 -->
+    <select id="getUserRooms" resultType="com.team.ain.dto.chat.ChatRoomDTO">
+        SELECT 
+            r.id,
+            r.room_name,
+            r.room_type,
+            r.host_id,
+            r.created_at,
+            r.is_active as active,
+            COUNT(DISTINCT crm.member_id) as member_count,
+            (
+                SELECT COUNT(*)
+                FROM chat_message cm
+                WHERE cm.room_id = r.id
+                AND cm.created_at > (
+                    SELECT last_read_at 
+                    FROM chat_room_member 
+                    WHERE room_id = r.id 
+                    AND member_id = #{memberId}
+                )
+                AND cm.sender_id != #{memberId}
+                AND cm.is_deleted = false
+            ) as unread_count,
+            last_msg.created_at as last_message_time,
+            last_msg.content as last_message
+        FROM chat_room r
+        JOIN chat_room_member crm ON r.id = crm.room_id
+        LEFT JOIN (
+            SELECT 
+                room_id, 
+                content, 
+                created_at
+            FROM chat_message
+            WHERE (room_id, created_at) IN (
+                SELECT 
+                    room_id, 
+                    MAX(created_at)
+                FROM chat_message
+                WHERE is_deleted = false
+                GROUP BY room_id
+            )
+        ) last_msg ON r.id = last_msg.room_id
+        WHERE r.is_active = true
+        AND EXISTS (
+            SELECT 1 
+            FROM chat_room_member 
+            WHERE room_id = r.id 
+            AND member_id = #{memberId}
+        )
+        GROUP BY r.id, last_msg.created_at, last_msg.content
+        ORDER BY last_msg.created_at DESC NULLS LAST
+    </select>
+    
+    <!-- 채팅방 모든 멤버 id 가져오기 -->
+    <select id="findMembersByRoomId" resultType="long">
+        SELECT member_id 
+        FROM chat_room_member 
+        WHERE room_id = #{roomId}
+    </select>
+    
+    <!-- 채팅방 멤버인지 확인 -->
+    <select id="isRoomMember" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 
+            FROM chat_room_member 
+            WHERE room_id = #{roomId} 
+            AND member_id = #{userId}
+        )
+    </select>
+
+    <select id="findRoomById" resultType="com.team.ain.dto.chat.ChatRoomDTO">
+        SELECT * FROM chat_room WHERE id = #{roomId} AND is_active = true
+    </select>
+
+    <!-- 채팅방 읽음 -->
+    <update id="readChatRoom" parameterType="long">
+        UPDATE chat_room_member 
+        SET last_read_at = now() 
+        WHERE room_id = #{roomId} AND member_id = #{memberId}
+    </update>
+
+    <!-- 채팅방 나감 -->
+    <delete id="leaveChatRoom" parameterType="com.team.ain.dto.chat.ChatMember">
+        DELETE FROM chat_room_member WHERE room_id = #{roomId} AND member_id = #{memberId}
+    </delete>
+
+    <!-- 채팅방 이름으로 검색 -->
+    <select id="findByRoomNameContainingIgnoreCaseAndIsActiveTrue" resultType="com.team.ain.dto.chat.ChatRoomDTO">
+        SELECT 
+            cr.id, 
+            cr.room_name, 
+            cr.room_type, 
+            cr.host_id, 
+            cr.created_at, 
+            cr.is_active,
+            COUNT(DISTINCT crm.member_id) as member_count
+        FROM chat_room cr
+        LEFT JOIN chat_room_member crm ON cr.id = crm.room_id
+        WHERE cr.is_active = true
+        AND LOWER(cr.room_name) LIKE LOWER(CONCAT('%', #{keyword}, '%'))
+        GROUP BY cr.id, cr.room_name, cr.room_type, cr.host_id, cr.created_at, cr.is_active
+        ORDER BY cr.created_at DESC
+        LIMIT #{size} 
+        OFFSET #{offset}
+    </select>
+
+    <!-- 모든 활성화된 채팅방 조회 -->
+    <select id="findAllByIsActiveTrue" resultType="com.team.ain.dto.chat.ChatRoomDTO">
+        SELECT 
+            cr.id, 
+            cr.room_name, 
+            cr.room_type, 
+            cr.host_id, 
+            cr.created_at, 
+            cr.is_active,
+            COUNT(DISTINCT crm.member_id) as member_count
+        FROM chat_room cr
+        LEFT JOIN chat_room_member crm ON cr.id = crm.room_id
+        WHERE cr.is_active = true
+        GROUP BY cr.id, cr.room_name, cr.room_type, cr.host_id, cr.created_at, cr.is_active
+        ORDER BY cr.created_at DESC
+        LIMIT #{size}
+        OFFSET #{offset}
+    </select>
+    
+    <!-- 검색된 총 채팅방 수 -->
+    <select id="countByRoomNameContainingIgnoreCaseAndIsActiveTrue" resultType="long">
+        SELECT COUNT(*) 
+        FROM chat_room
+        WHERE is_active = true
+        AND LOWER(room_name) LIKE LOWER(CONCAT('%', #{keyword}, '%'))
+    </select>
+    
+    <!-- 전체 활성화된 채팅방 수 -->
+    <select id="countAllByIsActiveTrue" resultType="long">
+        SELECT COUNT(*) 
+        FROM chat_room
+        WHERE is_active = true
+    </select>
+
+    <!-- 채팅방 멤버 조회 -->
+    <select id="findByRoomId" resultType="com.team.ain.dto.chat.ChatMember">
+        SELECT 
+            room_id,
+            member_id,
+            joined_at,
+            last_read_at
+        FROM chat_room_member
+        WHERE room_id = #{roomId}
+    </select>
+    
+    <!-- 특정 채팅방의 특정 멤버 조회 -->
+    <select id="findByRoomIdAndMemberId" resultType="com.team.ain.dto.chat.ChatMember">
+        SELECT 
+            room_id,
+            member_id,
+            joined_at,
+            last_read_at
+        FROM chat_room_member
+        WHERE room_id = #{roomId}
+        AND member_id = #{memberId}
+    </select>
+    
+    <!-- 마지막 읽은 시간 업데이트 -->
+    <update id="save">
+        UPDATE chat_room_member 
+        SET last_read_at = #{lastReadAt}
+        WHERE room_id = #{roomId} 
+        AND member_id = #{memberId}
+    </update>
+</mapper>

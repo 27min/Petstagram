@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.ain.mapper.ChatMessageMapper">
+    
+    <!-- 메시지 저장 -->
+    <insert id="insertMessage" parameterType="com.team.ain.dto.chat.ChatMessageDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chat_message (
+            room_id,
+            sender_id,
+            message_type,
+            content,
+            is_deleted,
+            file_url,
+            file_name,
+            file_size
+        ) VALUES (
+            #{roomId},
+            #{senderId},
+            #{messageType}::MESSAGE_TYPE,
+            #{content},
+            false,
+            #{fileUrl},
+            #{fileName},
+            #{fileSize}
+        )
+    </insert>
+    
+    <!-- 채팅방의 메시지 목록 조회 -->
+    <select id="findMessagesByRoomId" resultType="com.team.ain.dto.chat.ChatMessageDTO">
+        SELECT 
+            m.*,
+            mb.name as sender_name,
+            mb.profile_picture_url as sender_profile_url
+        FROM chat_message m
+        LEFT JOIN member mb ON m.sender_id = mb.id
+        WHERE m.room_id = #{roomId}
+        AND m.is_deleted = false
+        ORDER BY m.created_at ASC
+    </select>
+
+    <!-- 최근 메시지 조회 -->
+    <select id="findRecentMessages" 
+            parameterType="map" 
+            resultType="com.team.ain.dto.chat.ChatMessageDTO">
+        SELECT 
+            m.*,
+            mb.name as sender_name,
+            mb.profile_picture_url as sender_profile_url
+        FROM (
+            SELECT * FROM chat_message 
+            WHERE room_id = #{roomId} 
+            AND is_deleted = false
+            ORDER BY created_at DESC 
+            LIMIT #{size}
+        ) m
+        LEFT JOIN member mb ON m.sender_id = mb.id
+        ORDER BY m.created_at ASC
+    </select>
+
+    <!-- 채팅방의 메시지 목록 조회 -->
+    <select id="findMessagesWithCursor" 
+            parameterType="map" 
+            resultType="com.team.ain.dto.chat.ChatMessageDTO">
+        SELECT 
+            m.*,
+            mb.name as sender_name,
+            mb.profile_picture_url as sender_profile_url
+        FROM chat_message m
+        LEFT JOIN member mb ON m.sender_id = mb.id
+        WHERE m.room_id = #{roomId}
+            AND m.is_deleted = false
+            <if test="cursor.lastMessageTime != null">
+                <![CDATA[
+                AND m.created_at < #{cursor.lastMessageTime}
+                ]]>
+            </if>
+        ORDER BY m.created_at DESC
+        LIMIT #{cursor.pageSize}
+    </select>
+
+    <select id="getMessageCounts" resultType="integer">
+        SELECT COUNT(*) as unread_count
+        FROM chat_message cm
+        JOIN chat_room_member crm ON cm.room_id = crm.room_id
+        WHERE crm.member_id = #{userId}
+        AND cm.created_at > crm.last_read_at
+        AND cm.sender_id != #{userId}
+        AND cm.is_deleted = false;
+    </select>
+
+    <!-- 읽지 않은 메시지 수 조회 -->
+    <select id="countUnreadMessages" resultType="integer">
+        SELECT COUNT(*) 
+        FROM chat_message cm
+        JOIN chat_room_member crm 
+            ON cm.room_id = crm.room_id
+        WHERE crm.member_id = #{memberId}
+        AND cm.created_at > crm.last_read_at
+        AND cm.sender_id != #{memberId}
+        AND cm.is_deleted = false
+    </select>
+</mapper>

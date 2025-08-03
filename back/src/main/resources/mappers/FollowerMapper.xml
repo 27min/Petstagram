@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.team.ain.mapper.FollowersMapper">
+    
+    <!-- 팔로워 추가 -->
+    <insert id="follow">
+        INSERT INTO followers (
+            follower_id,
+            following_id
+        ) VALUES (
+            #{followerId},
+            #{followingId}
+        )
+    </insert>
+    
+    <!-- 팔로워 삭제 -->
+    <delete id="unfollow">
+        DELETE FROM followers 
+        WHERE follower_id = #{followerId} 
+        AND following_id = #{followingId}
+    </delete>
+    
+    <!-- 팔로우 중인지 체크 -->
+    <select id="isFollowing" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1 
+            FROM followers 
+            WHERE follower_id = #{followerId} 
+            AND following_id = #{followingId}
+        )
+    </select>
+    
+    <!-- 팔로잉 아이디 가져오기 -->
+    <select id="getFollowingIds" resultType="long">
+        SELECT following_id 
+        FROM followers 
+        WHERE follower_id = #{memberId}
+    </select>
+    
+    <!-- 팔로워 아이디 가져오기 -->
+    <select id="getFollowerIds" resultType="integer">
+        SELECT follower_id 
+        FROM followers 
+        WHERE following_id = #{memberId}
+    </select>
+    
+    <!-- 팔로워 카운트 -->
+    <select id="getFollowersCount" resultType="integer">
+        SELECT COUNT(*) 
+        FROM followers 
+        WHERE following_id = #{memberId}
+    </select>
+    
+    <!-- 팔로잉 카운트 -->
+    <select id="getFollowingCount" resultType="integer">
+        SELECT COUNT(*) 
+        FROM followers 
+        WHERE follower_id = #{memberId}
+    </select>
+
+    <select id="getFollowers" resultType="com.team.ain.dto.MemberResponse">
+        SELECT 
+            m.id,
+            m.name,
+            m.profile_picture_url as profilePictureUrl
+        FROM member m
+        INNER JOIN followers f ON m.id = f.follower_id
+        WHERE f.following_id = #{memberId}
+    </select>
+
+    <select id="getFollowing" resultType="com.team.ain.dto.MemberResponse">
+        SELECT 
+            m.id,
+            m.name,
+            m.profile_picture_url as profilePictureUrl
+        FROM member m
+        INNER JOIN followers f ON m.id = f.following_id
+        WHERE f.follower_id = #{memberId}
+    </select>
+
+</mapper>

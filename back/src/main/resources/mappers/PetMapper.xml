@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.team.ain.mapper.PetMapper">
+ 
+    <!-- 생성 -->
+    <insert id="insertPet" parameterType="com.team.ain.dto.PetRegist">
+        INSERT INTO pets (member_id, name, species, breed, gender, age, photo_url, created_at)
+        VALUES (#{memberId}, #{name}, #{species}, #{breed}, #{gender}, #{age}, #{photoUrl}, now())
+    </insert>
+
+    <!-- ID로 조회 -->
+    <select id="selectPetById" parameterType="long" resultType="com.team.ain.dto.Pet">
+        SELECT * FROM pets WHERE id = #{id}
+    </select>
+
+    <!-- 멤버 ID로 조회 -->
+    <select id="selectPetByMemberId" parameterType="long" resultType="com.team.ain.dto.Pet">
+        SELECT * FROM pets WHERE member_id = #{memberId}
+    </select>
+
+    <!-- 전체조회 -->
+    <select id="selectAllPets" resultType="com.team.ain.dto.Pet">
+        SELECT * FROM pets
+    </select>
+
+    <!-- 수정 -->
+    <update id="updatePet" parameterType="com.team.ain.dto.Pet">
+        UPDATE pets
+        SET name = #{name},
+            species = #{species},
+            breed = #{breed},
+            gender = #{gender},
+            age = #{age},
+            photo_url = #{photoUrl}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="deletePet" parameterType="long">
+        DELETE FROM pets WHERE id = #{id}
+    </delete>
+    
+    <select id="findByMemberId" parameterType="long" resultType="com.team.ain.dto.Pet">
+        SELECT * FROM pets WHERE member_id = #{id}
+    </select>
+
+    <!-- 여러 펫을 조회할 수 있도록 새로운 메서드 추가 1214 -->
+    <select id="findAllByMemberId" parameterType="long" resultType="com.team.ain.dto.Pet">
+        SELECT * FROM pets WHERE member_id = #{memberId}
+    </select>
+    
+</mapper>

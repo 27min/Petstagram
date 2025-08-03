@@ -1,0 +1,79 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.5'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.team'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// oauth
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	// security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-messaging'
+	// Spring web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	// devtools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// postgrsql DB
+	runtimeOnly 'org.postgresql:postgresql'
+	// devtools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// mybatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+	// junit
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+	// JWT 라이브러리
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	// Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Spring Boot Configuration Processor
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	// 웹 소켓
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+
+	// 페이징 임포트
+	implementation 'org.springframework.data:spring-data-commons'
+
+	// AWS관련
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.534'
+	implementation 'io.github.cdimascio:dotenv-java:3.0.0' // Dotenv 사용
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

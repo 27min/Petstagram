@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.team.ain.mapper.PlaceMapper">
+
+    <!-- 생성 -->
+    <insert id="insertPlace" parameterType="com.team.ain.dto.Place">
+        INSERT INTO place (
+            name,
+            address,
+            description,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{name},
+            #{address},
+            #{description},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- ID로 조회 -->
+    <select id="selectPlaceById" parameterType="long" resultType="com.team.ain.dto.Place">
+        SELECT 
+            id,
+            name,
+            address,
+            description,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM place
+        WHERE id = #{id}
+    </select>
+
+    <!-- 전체 조회 -->
+    <select id="selectAllPlaces" resultType="com.team.ain.dto.Place">
+        SELECT 
+            id,
+            name,
+            address,
+            description,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM place
+        ORDER BY id DESC
+    </select>
+
+    <!-- 수정 -->
+    <update id="updatePlace" parameterType="com.team.ain.dto.Place">
+        UPDATE place
+        SET 
+            name = #{name},
+            address = #{address},
+            description = #{description},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="deletePlace" parameterType="long">
+        DELETE FROM place 
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
