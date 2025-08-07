@@ -15,8 +15,6 @@
 | **Build Tool** | Gradle |
 | **ORM** | MyBatis 3.0.3 |
 | **Database** | PostgreSQL |
-| **API 문서화** | SpringDoc OpenAPI (Swagger UI) `2.1.0` |
-| **AI 연동** | Spring AI (Anthropic Claude 연동) `1.0.0-M2` |
 
 ---
 
@@ -25,7 +23,7 @@
 | 항목 | 버전 / 설명 |
 |------|-------------|
 | **React** | 18.3.1 |
-| **ShadCN-UI** | 0.9.0 (Tailwind 기반 UI 컴포넌트) |
+| **TailwindCSS** | 3.4.16 |
 
 ---
 
