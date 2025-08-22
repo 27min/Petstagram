@@ -40,9 +40,9 @@ const ProfilePage = ({ pageData, onPageChange }) => {
       };
 
       // API 엔드포인트 결정
-      const endpoint = isOwnProfile 
-        ? `${API_BASE_URL}/api/member/my`
-        : `${API_BASE_URL}/api/member/${pageData.memberId}`;
+      const endpoint = isOwnProfile
+        ? `${API_BASE_URL}/api/members/me`
+        : `${API_BASE_URL}/api/members/${pageData.memberId}`;
 
       const response = await fetch(endpoint, {
         method: "GET",

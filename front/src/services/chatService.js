@@ -11,7 +11,7 @@ class ChatServiceClass {
   // 채팅방 생성
   async createRoom(roomData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/rooms`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/rooms`, {
         method: 'POST',
         headers: {
           ...authService.getAuthHeader(),
@@ -39,7 +39,7 @@ class ChatServiceClass {
   // 채팅방 목록 조회
   async getRooms() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/rooms`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/rooms`, {
         method: 'GET',
         headers: {
           ...authService.getAuthHeader()
@@ -60,7 +60,7 @@ class ChatServiceClass {
   // 읽지 않은 모든 채팅 수
   async getMessageCounts() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/message-count`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/message-count`, {
         method: 'GET',
         headers: {
           ...authService.getAuthHeader()
@@ -81,7 +81,7 @@ class ChatServiceClass {
   // 채팅방 참여
   async joinRoom(roomId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/rooms/${roomId}/join`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/rooms/${roomId}/join`, {
         method: 'POST',
         headers: {
           ...authService.getAuthHeader(),
@@ -103,7 +103,7 @@ class ChatServiceClass {
   // 채팅방 나가기
   async leaveRoom(roomId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/rooms/${roomId}/leave`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/rooms/${roomId}/leave`, {
         method: 'POST',
         headers: {
           ...authService.getAuthHeader()
@@ -124,7 +124,7 @@ class ChatServiceClass {
   // 채팅방 정보 수정
   async updateRoom(roomId, updateData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/rooms/${roomId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/rooms/${roomId}`, {
         method: 'PUT',
         headers: {
           ...authService.getAuthHeader(),
@@ -147,7 +147,7 @@ class ChatServiceClass {
   // 채팅방 삭제 (호스트만 가능)
   async deleteRoom(roomId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/rooms/${roomId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/rooms/${roomId}`, {
         method: 'DELETE',
         headers: {
           ...authService.getAuthHeader()
@@ -168,7 +168,7 @@ class ChatServiceClass {
   // 채팅방 참여자 목록 조회
   async getRoomMembers(roomId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/rooms/${roomId}/members`, {
+      const response = await fetch(`${API_BASE_URL}/api/chats/rooms/${roomId}/members`, {
         method: 'GET',
         headers: {
           ...authService.getAuthHeader()
@@ -198,7 +198,7 @@ class ChatServiceClass {
             params.append('keyword', keyword);
         }
 
-        const response = await fetch(`${API_BASE_URL}/api/chat/rooms/search?${params}`, {
+        const response = await fetch(`${API_BASE_URL}/api/chats/rooms/search?${params}`, {
             method: 'GET',
             headers: {
                 ...authService.getAuthHeader()
@@ -272,7 +272,7 @@ class ChatServiceClass {
 
   async loadRecentMessages(roomId, size = 30) {
     try {
-      const url = `${API_BASE_URL}/api/chat/rooms/${roomId}/messages/recent?size=${size}`;
+      const url = `${API_BASE_URL}/api/chats/rooms/${roomId}/messages/recent?size=${size}`;
       const response = await fetch(url, {
         headers: {
           ...authService.getAuthHeader()
@@ -293,7 +293,7 @@ class ChatServiceClass {
   // 이전 메시지 로드
   async loadPreviousMessages(roomId, lastMessageTime, size = 30) {
     try {
-      let url = `${API_BASE_URL}/api/chat/rooms/${roomId}/messages?size=${size}`;
+      let url = `${API_BASE_URL}/api/chats/rooms/${roomId}/messages?size=${size}`;
       if (lastMessageTime) {
         url += `&lastMessageTime=${lastMessageTime}`;
       }

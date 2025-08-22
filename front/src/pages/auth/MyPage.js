@@ -29,7 +29,7 @@ const MyPage = () => {
           "Content-Type": "application/json",
         };
 
-        const response = await fetch(`${API_BASE_URL}/api/member/my`, {
+        const response = await fetch(`${API_BASE_URL}/api/members/me`, {
           method: "GET",
           headers,
           credentials: "include",
@@ -104,7 +104,7 @@ const MyPage = () => {
         "Content-Type": "application/json",
       };
 
-      const endpoint = `${API_BASE_URL}/api/pet/my`;
+      const endpoint = `${API_BASE_URL}/api/pets/me`;
       const method = isEditMode ? 'PUT' : 'POST'; // 1212: 등록/수정 모드에 따라 메서드 변경
 
       const response = await fetch(endpoint, {
@@ -140,7 +140,7 @@ const MyPage = () => {
         "Content-Type": "application/json",
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/member/my`, {
+      const response = await fetch(`${API_BASE_URL}/api/members/me`, {
         method: "GET",
         headers,
         credentials: "include",
