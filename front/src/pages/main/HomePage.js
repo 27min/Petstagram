@@ -27,7 +27,7 @@ const HomePage = ({ onPageChange }) => {
 
         if (memberData?.member?.id) {
           const response = await fetch(
-            `${API_BASE_URL}/api/member/${memberData.member.id}/following`, 
+            `${API_BASE_URL}/api/members/${memberData.member.id}/following`,
             {
               headers: {
                 ...authService.getAuthHeader(),

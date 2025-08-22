@@ -21,7 +21,7 @@ import com.team.ain.service.PetService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/pet")
+@RequestMapping("/api/pets")
 @RequiredArgsConstructor
 public class PetController {
 
@@ -50,7 +50,8 @@ public class PetController {
 
     // 수정
     @PutMapping("/{id}")
-    public ResponseEntity<String> updatePet(@RequestBody Pet pet) {
+    public ResponseEntity<String> updatePet(@PathVariable Long id, @RequestBody Pet pet) {
+        pet.setId(id);
         petService.updatePet(pet);
         return ResponseEntity.ok("정보 수정이 완료되었습니다.");
     }
@@ -65,7 +66,7 @@ public class PetController {
 
 
     // 현재 로그인한 멤버의 펫 등록 20241212
-    @PostMapping("/my")
+    @PostMapping("/me")
     public ResponseEntity<String> registerMyPet(
         @AuthenticationPrincipal UserDetails userDetails,
         @RequestBody PetRegist petRegist
@@ -76,7 +77,7 @@ public class PetController {
     }
 
     // 현재 로그인한 멤버의 펫 수정 20241212
-    @PutMapping("/my")
+    @PutMapping("/me")
     public ResponseEntity<String> updateMyPet(
         @AuthenticationPrincipal UserDetails userDetails,
         @RequestBody Pet petUpdateInfo

@@ -114,7 +114,7 @@ const ProfileEditModal = ({ memberInfo, onClose, onUpdate }) => {
         ...(profileData.password && { password: profileData.password })
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/member/update`, {
+      const response = await fetch(`${API_BASE_URL}/api/members/me`, {
         method: 'PUT',
         headers,
         credentials: 'include',

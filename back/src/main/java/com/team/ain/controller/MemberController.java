@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -41,15 +41,15 @@ public class MemberController {
     private final PostService postService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/signup")
+    @PostMapping
     public ResponseEntity<String> signup(@RequestBody MemberJoin memberJoin) {
-        
+
         memberService.signup(memberJoin);
-        
+
         return ResponseEntity.ok("회원가입 성공");
     }
-    
-    @GetMapping("/my")
+
+    @GetMapping("/me")
     public Map<String, Object> getMemberInfo(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
         Member member = memberService.findByEmail(email);
@@ -75,7 +75,7 @@ public class MemberController {
     }
 
     //1215 프로필 업뎃
-    @PutMapping("/update")
+    @PutMapping("/me")
     public ResponseEntity<String> updateProfile(
         @AuthenticationPrincipal UserDetails userDetails,
         @RequestBody MemberUpdateDTO updateDTO

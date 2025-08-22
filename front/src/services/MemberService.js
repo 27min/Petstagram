@@ -6,7 +6,7 @@ class MemberServiceClass {
     // 내 정보 조회
     async getMemberInfo() {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/member/my`, {
+            const response = await fetch(`${API_BASE_URL}/api/members/me`, {
                 method: 'GET',
                 headers: {
                     ...authService.getAuthHeader(),
@@ -26,7 +26,7 @@ class MemberServiceClass {
     // 특정 사용자의 정보 조회
     async getSomeoneInfo(memberId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/member/${memberId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/members/${memberId}`, {
                 method: 'GET',
                 headers: {
                     ...authService.getAuthHeader(),
@@ -46,7 +46,7 @@ class MemberServiceClass {
     // 팔로우하기
     async followMember(followingId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/follow/${followingId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/follows/${followingId}`, {
                 method: 'POST',
                 headers: {
                     ...authService.getAuthHeader(),
@@ -66,7 +66,7 @@ class MemberServiceClass {
     // 언팔로우하기
     async unfollowMember(followingId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/follow/${followingId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/follows/${followingId}`, {
                 method: 'DELETE',
                 headers: {
                     ...authService.getAuthHeader(),
@@ -86,7 +86,7 @@ class MemberServiceClass {
     // 팔로워 목록 조회
     async getFollowers(memberId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/member/${memberId}/followers`, {
+            const response = await fetch(`${API_BASE_URL}/api/members/${memberId}/followers`, {
                 method: 'GET',
                 headers: {
                     ...authService.getAuthHeader(),
@@ -106,7 +106,7 @@ class MemberServiceClass {
     // 팔로잉 목록 조회
     async getFollowing(memberId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/member/${memberId}/following`, {
+            const response = await fetch(`${API_BASE_URL}/api/members/${memberId}/following`, {
                 method: 'GET',
                 headers: {
                     ...authService.getAuthHeader(),
@@ -125,7 +125,7 @@ class MemberServiceClass {
 
     async checkFollowStatus(memberId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/member/${memberId}/follow-status`, {
+            const response = await fetch(`${API_BASE_URL}/api/members/${memberId}/follow-status`, {
                 method: 'GET',
                 headers: {
                     ...authService.getAuthHeader(),

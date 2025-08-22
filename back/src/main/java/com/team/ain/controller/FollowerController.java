@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/follow")
+@RequestMapping("/api/follows")
 @RequiredArgsConstructor
 public class FollowerController {
 
