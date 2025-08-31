@@ -26,7 +26,7 @@
     </update>
 
     <select id="findByEmail" parameterType="String" resultType="com.team.ain.dto.auth.Member">
-        SELECT * FROM member WHERE email = #{email} LIMIT 1
+        SELECT id, email, name, phone_number, profile_picture_url, created_at FROM member WHERE email = #{email} LIMIT 1
     </select>
     <select id="findByPhoneNumber" parameterType="String" resultType="com.team.ain.dto.auth.Member">
         SELECT * FROM member WHERE phone_number = #{phoneNumber}
