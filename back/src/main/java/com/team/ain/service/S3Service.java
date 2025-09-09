@@ -39,10 +39,17 @@ public class S3Service {
     public S3Service(AmazonS3 amazonS3) {
         Dotenv dotenv = Dotenv.configure().load();
         this.amazonS3 = amazonS3;
-        this.bucketName = dotenv.get("AWS_BUCKET_NAME");
+        String provider = dotenv.get("S3_PROVIDER");
+        provider = (provider != null) ? provider : "AWS";
+
+        if ("NAVER".equalsIgnoreCase(provider)) {
+            this.bucketName = dotenv.get("NAVER_BUCKET_NAME");
+        } else {
+            this.bucketName = dotenv.get("AWS_BUCKET_NAME");
+        }
 
         if (this.bucketName == null) {
-            throw new IllegalArgumentException("AWS_BUCKET_NAME cannot be null.");
+            throw new IllegalArgumentException("Bucket name cannot be null.");
         }
     }
 
