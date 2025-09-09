@@ -46,3 +46,26 @@
 - 카카오지도 API 연동 및 위치 기반 검색 기능 구현
 - NaverCloud Storage 연동 및 게시글/프로필 등 사진 저장
 - 실시간 채팅 기능 개발 (WebSocket)
+
+## 🔧 환경 변수
+
+파일 저장소는 AWS S3 또는 Naver Cloud Object Storage 중 하나를 사용할 수 있습니다. 사용하려는 저장소에 따라 아래 환경 변수를 설정해주세요.
+
+### 공통
+
+- `S3_PROVIDER` : `AWS` 또는 `NAVER` 중 선택 (기본값 `AWS`)
+
+### AWS 사용 시
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION`
+- `AWS_BUCKET_NAME`
+
+### Naver Cloud 사용 시
+
+- `NAVER_ACCESS_KEY`
+- `NAVER_SECRET_KEY`
+- `NAVER_REGION` (예: `kr-standard`)
+- `NAVER_END_POINT` (예: `https://kr.object.ncloudstorage.com`)
+- `NAVER_BUCKET_NAME`
